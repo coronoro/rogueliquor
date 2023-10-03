@@ -1,4 +1,3 @@
-import {GameObjectClass, Sprite, Vector} from "kontra";
 import {Staff} from "../staffs";
 import {Timer} from "../../timer";
 import {centeredAnchor} from "../../../utils/sprite";
@@ -7,8 +6,9 @@ import {SpellParticle} from "./particles/spellParticle";
 import SpellCaster from "./spellCaster";
 import {Character} from "../../character";
 import {ParticleType} from "./particles/particleTypes";
+import {GameEntity} from "../../../engine/game-object";
 
-export class Spell extends GameObjectClass{
+export class Spell extends GameEntity {
     spellCaster: SpellCaster
     owner: Character
     targets: Character[]
@@ -35,43 +35,44 @@ export class Spell extends GameObjectClass{
         })
     }
 
-    start(){
+    start() {
         this.castTimer.start(this.calculatedCastingTime())
         return this;
     }
 
-    doFollowSpellCaster(){
+    doFollowSpellCaster() {
         this.x = this.spellCaster.world.x;
         this.y = this.spellCaster.world.y;
     }
 
-    findTarget(): Character{
+    findTarget(): Character {
         return this.owner.targets()[0] ?? null;
     }
 
     calculatedCastingTime = () => this.castTime;
 
-    getCastTimeout = () => Math.floor(this.calculatedCastingTime() * (5/4));
+    getCastTimeout = () => Math.floor(this.calculatedCastingTime() * (5 / 4));
 
     getSpellParticles = (): SpellParticle[] => this.children.filter(c => c instanceof SpellParticle).map(c => c as SpellParticle);
 
-    castingUpdate(){
-        if(this.followsCaster) this.doFollowSpellCaster();
+    castingUpdate() {
+        if (this.followsCaster) this.doFollowSpellCaster();
     }
 
-    update(){
+    update() {
         super.update();
         this.castTimer.update();
 
         this.removeFlag = this.remove();
-        if(this.removeFlag) this.onRemove()
+        if (this.removeFlag) this.onRemove()
         this.children = this.children.filter(c => !(c as SpellParticle).removeFlag)
 
-        if(this.isCasting) this.castingUpdate();
+        if (this.isCasting) this.castingUpdate();
         else this.lifeTime--;
     }
 
-    onRemove = () => {}
+    onRemove = () => {
+    }
 
     remove = () => !this.owner?.isAlive() || (!this.isCasting && (this.lifeTime <= 0 || this.getSpellParticles().length == 0));
 }

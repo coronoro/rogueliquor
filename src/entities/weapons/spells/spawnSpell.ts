@@ -14,7 +14,7 @@ class SpawnSpell extends Spell{
 
         this.onRemove = () => {
             const enemy = getEnemy();
-            enemy.setPos(this.x, this.y)
+            // enemy.setPos(this.x, this.y)
             room.components.enemies.push(enemy)
             this.castTime = 110;
         };
