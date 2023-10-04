@@ -1,4 +1,3 @@
-import {Sprite} from "kontra";
 import {Character} from "../character";
 import {Damageable} from "./damageable";
 

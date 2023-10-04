@@ -1,6 +1,6 @@
 import {Coordinate, Vector} from "./vector";
 
-interface GameObject {
+export interface GameObject {
     update(delta: number): void;
 
     addChild(child: GameObject): void;
@@ -12,6 +12,8 @@ export class GameEntity implements GameObject {
     scaleY: number = 1
     width: number = 0
     height: number = 0
+
+    rotation = 0
     children: GameObject[] = []
 
     constructor(object: Partial<GameEntityParam>) {

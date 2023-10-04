@@ -1,4 +1,3 @@
-import {GameObjectClass, Sprite} from "kontra";
 import {centeredAnchor, getSpriteById} from "../utils/sprite";
 import {PenColor} from "../utils/colorize";
 import {StatusAttributes} from "./status-attributes";
@@ -6,17 +5,20 @@ import {Entity} from "./entity";
 import {MAX_HEALTH_REWARD, RewardStatus} from "../utils/reward-util";
 import {Character} from "./character";
 import {Weapon} from "./weapons/weapon";
+import {GameEntity} from "../engine/game-object";
 
 export type StatusReward = Partial<StatusAttributes>;
 
 
-class Reward extends GameObjectClass {
+class Reward extends GameEntity {
     sprite: Sprite;
     oldGod: boolean;
     text?: string;
+    status: RewardStatus
 
-    constructor(status?: RewardStatus, iconId?: number, text?: string, oldGod: boolean = false) {
-        super({status: status, anchor: centeredAnchor})
+    constructor(status: RewardStatus, iconId?: number, text?: string, oldGod: boolean = false) {
+        super({ anchor: centeredAnchor})
+        this.status = status
         this.sprite = getSpriteById(iconId!, PenColor.None);
         this.text = text;
         this.oldGod = oldGod;

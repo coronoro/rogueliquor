@@ -7,13 +7,14 @@ import {getVectorBetweenGameObjects} from "../utils/vectors";
 import CatharPerfect from "./npcs/catharPerfect";
 import Game from "../game";
 import {playSound, POWERUP} from "../utils/sound";
-import {GameObject} from "kontra";
+import {GameEntity} from "../engine/game-object";
+import {Coordinate} from "../engine/vector";
 
 class Interactable extends Entity {
-    gameObject: GameObject
+    gameObject: GameEntity
 
-    constructor(x: number, y: number, gameObject: GameObject) {
-        super({x: x, y: y, entity: gameObject, anchor: centeredAnchor});
+    constructor(position:Coordinate, gameObject: GameEntity) {
+        super({position:position, anchor: centeredAnchor});
         this.scaleX = gameObject.scaleX > 1 ? 1 : 4;
         this.scaleY = gameObject.scaleY > 1 ? 1 : 4;
         this.gameObject = gameObject;

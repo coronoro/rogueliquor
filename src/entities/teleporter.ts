@@ -1,4 +1,3 @@
-import {collides, GameObject, GameObjectClass, Sprite} from "kontra";
 import Room from "../rooms/room";
 import {Reward} from "./reward";
 import {centeredAnchor} from "../utils/sprite";
@@ -6,10 +5,16 @@ import {wallHeight} from "../utils/utils";
 import {Player} from "./player";
 import BattleRoom from "../rooms/battleRoom";
 import Game from "../game";
+import {GameEntity} from "../engine/game-object";
+import {Coordinate} from "../engine/vector";
 
-class Teleporter extends GameObjectClass{
+class Teleporter extends GameEntity{
+
+    toRoom: Room
+
     constructor(x: number, toRoom: Room) {
-        super({toRoom: toRoom, x: x, y: wallHeight, anchor: centeredAnchor, width: 80, height: 4});
+        super({position: new Coordinate(x, wallHeight), anchor: centeredAnchor, width: 80, height: 4});
+        this.toRoom = toRoom
         this.addChild(Sprite({width: 80, height: 4, color: "white", anchor: centeredAnchor}));
 
         if(toRoom instanceof BattleRoom && toRoom.reward){

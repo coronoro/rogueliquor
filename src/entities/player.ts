@@ -1,8 +1,3 @@
-import {
-    keyMap,
-    keyPressed, Text,
-    Vector,
-} from "kontra";
 import {Character} from "./character";
 import {mousePosition, mousePressed} from "../utils/mouse";
 import {centeredAnchor, getSpriteById} from "../utils/sprite";
@@ -12,6 +7,8 @@ import Room from "../rooms/room";
 import StartRoom from "../rooms/startRoom";
 import {Reward, StatusReward} from "./reward";
 import {Sword} from "./weapons/daggers";
+import {Coordinate, Vector} from "../engine/vector";
+import {Text} from "../engine/text";
 
 export class Player extends Character {
     interactText: Text;
@@ -20,9 +17,8 @@ export class Player extends Character {
 
     private constructor(x: number, y: number) {
         super(x, y, getSpriteById(4));
-        this.interactText = Text({
-            x: 1,
-            y: -7,
+        this.interactText = new Text({
+            position: new Coordinate(1,7),
             text: "!",
             color: "red",
             font: "5px Arial",
@@ -50,8 +46,8 @@ export class Player extends Character {
         this.rewards = new Map<keyof StatusReward, Reward[]>()
     }
 
-    update() {
-        super.update();
+    update(delta:number) {
+        super.update(delta);
 
         if (this.room instanceof StartRoom) {
             this.sprite.opacity = 0.3
@@ -77,7 +73,7 @@ export class Player extends Character {
     updatePlayerMovement() {
         if (this.dashing) return;
 
-        const direction: Vector = Vector(0, 0);
+        const direction: Vector = new Vector(0, 0);
         if (keyPressed('w')) direction.y = -1;
         if (keyPressed('a')) direction.x = -1;
         if (keyPressed('d')) direction.x = 1;
@@ -91,7 +87,7 @@ export class Player extends Character {
     pointDaggerDirection() {
         if (!this.armCanRotate) return super.pointDaggerDirection()
         const mouse = mousePosition();
-        return Vector(mouse.x - this.world.x, mouse.y - this.world.y).normalize();
+        return new Vector(mouse.x - this.world.x, mouse.y - this.world.y).normalize();
     }
 
     updateInteractables() {
@@ -106,6 +102,6 @@ export class Player extends Character {
 
     getLookingDirection() {
         if (this.weapon?.isAttacking && !this.armCanRotate) return 0;
-        return this.x - mousePosition().x < 0 ? 1 : -1;
+        return this.position.x - mousePosition().x < 0 ? 1 : -1;
     }
 }

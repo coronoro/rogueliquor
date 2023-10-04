@@ -1,8 +1,8 @@
-import {Vector} from "kontra";
 import {Weapon} from "./weapon";
 import {getSpriteById} from "../../utils/sprite";
 import {PenColor} from "../../utils/colorize";
 import {img2} from "../../utils/utils";
+import {Vector} from "../../engine/vector";
 
 export class Dagger extends Weapon {
     stabbingDistance: number = 6;
@@ -11,7 +11,7 @@ export class Dagger extends Weapon {
 
     speed: number = 0.5;
     returnDagger: boolean = false;
-    direction = Vector(1, 0);
+    direction = new Vector(1, 0);
     wiggleX: number = 0.6;
 
     update() {
@@ -21,8 +21,7 @@ export class Dagger extends Weapon {
         if (!this.isAttacking) return;
 
         this.currentDistance += this.returnDagger ? -this.speed : this.speed;
-        this.x += this.direction.x * this.currentDistance;
-        this.y += this.direction.y * this.currentDistance;
+        this.position = this.position.add(this.direction.multiply(this.currentDistance))
 
         if (this.currentDistance >= this.stabbingDistance - this.holdingDistance) {
             this.returnDagger = true;
@@ -35,9 +34,9 @@ export class Dagger extends Weapon {
     }
 
     adjust() {
-        this.rotation = Vector(0, -1).angle(this.direction) - 0.5 * Math.PI;
-        this.x = this.originY + this.direction.x * this.holdingDistance
-        this.y = this.originY + this.direction.y * this.holdingDistance
+        this.rotation = new Vector(0, -1).angle(this.direction) - 0.5 * Math.PI;
+        this.position.x = this.originY + this.direction.x * this.holdingDistance
+        this.position.y = this.originY + this.direction.y * this.holdingDistance
     }
 
     pointInDirection(direction: Vector) {

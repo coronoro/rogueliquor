@@ -13,6 +13,7 @@ import {
     sumRewards
 } from "../utils/reward-util";
 import {Weapon} from "./weapons/weapon";
+import {Coordinate, Vector} from "../engine/vector";
 
 
 export class Character extends Entity implements StatusAttributes {
@@ -98,7 +99,7 @@ export class Character extends Entity implements StatusAttributes {
     }
 
     constructor(x: number, y: number, sprite: Sprite, room?: Room) {
-        super({width: 5, height: 8, x: x, y: y, scaleX: 5, scaleY: 5});
+        super({width: 5, height: 8, position: new Coordinate(x,y), scaleX: 5, scaleY: 5});
         this.sprite = sprite;
         this.sprite.x += 0.5;
         this.room = room
@@ -147,8 +148,8 @@ export class Character extends Entity implements StatusAttributes {
         this.health = maxHealth;
     }
 
-    update() {
-        super.update();
+    update(delta:number) {
+        super.update(delta);
         this.updateHopping();
 
         this.invincibleTimer.update();
@@ -191,7 +192,7 @@ export class Character extends Entity implements StatusAttributes {
     };
 
     pointDaggerDirection() {
-        return Vector(this.lookingDirection, 0);
+        return new Vector(this.lookingDirection, 0);
     }
 
     dashTo(direction: Vector) {
