@@ -4,6 +4,7 @@ import {Character} from "../character";
 import {Timer} from "../timer";
 import {Spell} from "./spells/spell";
 import SpellCaster from "./spells/spellCaster";
+import {Coordinate} from "../../engine/vector";
 
 export class Staff extends Weapon {
     postCastTimer?: Timer;
@@ -15,18 +16,18 @@ export class Staff extends Weapon {
     spellFactories: any;
 
     constructor(spellFactories: any[]) {
-        super(5, 0, getSpriteById(7));
+        super({position: new Coordinate(5, 0)}, getSpriteById(7));
         this.spellFactories = spellFactories;
     }
 
     setOwner(owner: Character) {
         super.setOwner(owner);
-        this.spellCaster = new SpellCaster(-1.5, -3, this.owner, this.spellFactories)
+        this.spellCaster = new SpellCaster(new Coordinate(-1.5, -3), this.owner, this.spellFactories)
         this.addChild(this.spellCaster);
     }
 
     startAttack(target?: Character) {
-        if(this.spellCaster === undefined) return;
+        if (this.spellCaster === undefined) return;
 
         super.startAttack(target);
         const spell = this.spellCaster.cast();
@@ -39,7 +40,7 @@ export class Staff extends Weapon {
         this.postCastTimer?.update();
     }
 
-    endAttack(){
+    endAttack() {
         super.endAttack();
         this.currentSpell = undefined;
     }

@@ -3,22 +3,22 @@ import {mousePosition, mousePressed} from "../utils/mouse";
 import {centeredAnchor, getSpriteById} from "../utils/sprite";
 import {HOP, playSound, STAB} from "../utils/sound";
 import Game from "../game";
-import Room from "../rooms/room";
 import StartRoom from "../rooms/startRoom";
 import {Reward, StatusReward} from "./reward";
-import {Sword} from "./weapons/daggers";
 import {Coordinate, Vector} from "../engine/vector";
-import {Text} from "../engine/text";
+import {TextNode} from "../engine/nodes/text";
+import {Params} from "../engine/nodes/types";
+import {EntityNode} from "../engine/nodes/entity";
 
 export class Player extends Character {
-    interactText: Text;
+    interactText: TextNode;
 
     private static _instance: Player;
 
-    private constructor(x: number, y: number) {
-        super(x, y, getSpriteById(4));
-        this.interactText = new Text({
-            position: new Coordinate(1,7),
+    private constructor(params: Params<EntityNode>) {
+        super(params, getSpriteById(4));
+        this.interactText = new TextNode({
+            position: new Coordinate(1, 7),
             text: "!",
             color: "red",
             font: "5px Arial",
@@ -32,7 +32,7 @@ export class Player extends Character {
         this.reset();
     }
 
-    public static getInstance = () => Player._instance ??= new Player(0, 0);
+    public static getInstance = () => Player._instance ??= new Player({position: new Coordinate(0, 0)});
 
     reset() {
         this.removeFlag = false;
@@ -46,7 +46,7 @@ export class Player extends Character {
         this.rewards = new Map<keyof StatusReward, Reward[]>()
     }
 
-    update(delta:number) {
+    update(delta: number) {
         super.update(delta);
 
         if (this.room instanceof StartRoom) {
@@ -73,7 +73,7 @@ export class Player extends Character {
     updatePlayerMovement() {
         if (this.dashing) return;
 
-        const direction: Vector = new Vector(0, 0);
+        const direction = new Coordinate(0, 0);
         if (keyPressed('w')) direction.y = -1;
         if (keyPressed('a')) direction.x = -1;
         if (keyPressed('d')) direction.x = 1;

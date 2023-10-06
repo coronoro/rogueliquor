@@ -1,8 +1,9 @@
-import {Vector} from "kontra";
 import {PenColor} from "./colorize";
+import {Coordinate, Vector} from "../engine/vector";
 
 function getRandomVecDir() {
-    return Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
+    //TODO replace with randint
+    return new Vector(Math.random() * 2 - 1, Math.random() * 2 - 1);
 }
 
 let canvasWidth: number;
@@ -11,9 +12,9 @@ const getCanvasWidth: () => number = () => canvasWidth;
 let canvasHeight: number = 0;
 const getCanvasHeight: () => number = () => canvasHeight;
 
-const getCanvasCenter: () => Vector = () => Vector(canvasWidth/2, canvasHeight/2)
+const getCanvasCenter: () => Coordinate = () => new Coordinate(canvasWidth / 2, canvasHeight / 2)
 
-function setCanvasBoundaries(canvas: HTMLCanvasElement){
+function setCanvasBoundaries(canvas: HTMLCanvasElement) {
     canvasWidth = canvas.width;
     canvasHeight = canvas.height;
 }
@@ -22,9 +23,9 @@ const wallHeight = 60;
 
 const randNumber = (num: number) => 0.9 * num + Math.random() * 0.1 * num;
 
-function levelToColor(lvl: number){
-    if(lvl <= 3) return PenColor.Green;
-    if(lvl <= 6) return PenColor.Blue;
+function levelToColor(lvl: number) {
+    if (lvl <= 3) return PenColor.Green;
+    if (lvl <= 6) return PenColor.Blue;
     return PenColor.Red;
 }
 
@@ -35,4 +36,15 @@ img.src = imageSrc;
 const imageSrc2 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAACVJREFUGJVjYKAPKHBk+I9LjmVKCETy3vVzGIqUNI0YCZpAOQAAe4QJTDUodxAAAAAASUVORK5CYII="
 const img2 = document.createElement("img");
 img2.src = imageSrc2;
-export {getRandomVecDir, randNumber, setCanvasBoundaries, getCanvasWidth, getCanvasHeight, getCanvasCenter, wallHeight, levelToColor, img, img2}
+export {
+    getRandomVecDir,
+    randNumber,
+    setCanvasBoundaries,
+    getCanvasWidth,
+    getCanvasHeight,
+    getCanvasCenter,
+    wallHeight,
+    levelToColor,
+    img,
+    img2
+}

@@ -1,23 +1,23 @@
-import {GameObject, Sprite, TileEngine} from "kontra";
 import {Player} from "../entities/player";
 import {Reward} from "../entities/reward";
 import {Enemy} from "../entities/enemies/enemy";
 import Interactable from "../entities/interactable";
 import {getCanvasWidth, wallHeight} from "../utils/utils";
 import Game from "../game";
-import { Spell } from "../entities/weapons/spells/spell";
+import {Spell} from "../entities/weapons/spells/spell";
+import {EntityNode} from "../engine/nodes/entity";
 
 type SortedComponents = {
     interactables: Interactable[],
-    backgroundObjects: GameObject[],
+    backgroundObjects: EntityNode[],
     enemies: Enemy[],
     rewards: Reward[],
     player: Player[],
     spells: Spell[],
-    gui: GameObject[],
+    gui: EntityNode[],
 }
 
-export default class Room {
+export default class Room extends EntityNode {
     tileEngine?: TileEngine
 
     components: SortedComponents = {
@@ -30,59 +30,59 @@ export default class Room {
         gui: [],
     }
 
-    get gui(){
+    get gui() {
         return this.components.gui;
     }
 
-    get backgroundObjects(){
+    get backgroundObjects() {
         return this.components.backgroundObjects;
     }
 
-    get interactables(){
+    get interactables() {
         return this.components.interactables;
     }
 
-    get enemies(){
+    get enemies() {
         return this.components.enemies;
     }
 
-    deleteSpells(){
+    deleteSpells() {
         this.components.spells.forEach(s => {
             s.lifeTime = 0
             s.isCasting = false;
         });
     }
 
-    deleteEnemies(){
+    deleteEnemies() {
         this.enemies.forEach(e => e.removeFlag = true);
     }
 
-    addInteractable(interactable: Interactable){
+    addInteractable(interactable: Interactable) {
         interactable.setRoom(this);
         this.interactables.push(interactable);
     }
 
-    addSpell(spell: Spell){
+    addSpell(spell: Spell) {
         this.components.spells.push(spell);
     }
 
-    init(){
+    init() {
 
     }
 
-    render() {
-        this.tileEngine?.render();
-        Object.entries(this.components).forEach(
-            ([key, value]) => value.forEach(c => c.render())
-        );
-    }
+    // render() {
+    //     this.tileEngine?.render();
+    //     Object.entries(this.components).forEach(
+    // ([key, value]) => value.forEach(c => c.render())
+    // );
+    // }
 
-    update() {
+    update(delta: number) {
         Object.entries(this.components).forEach(
             ([key, value]) => {
                 // @ts-ignore
                 this.components[key] = value.filter(c => {
-                    c.update()
+                    c.update(delta)
                     return !c?.removeFlag ?? true;
                 });
             }

@@ -1,20 +1,23 @@
-import {GameObjectClass, Sprite} from "kontra";
 import {getSpriteById} from "../utils/sprite";
 import Game from "../game";
+import {SpriteNode} from "../engine/nodes/sprite";
+import {EntityNode} from "../engine/nodes/entity";
+import {Params} from "../engine/nodes/types";
 
-class MuteIcon extends GameObjectClass{
-    sprite: Sprite;
-    constructor(x: number, y: number) {
-        super({x: x, y: y});
+class MuteIcon extends EntityNode {
+    sprite: SpriteNode;
+
+    constructor(config: Params<EntityNode>) {
+        super(config);
         this.setScale(3, 3);
         this.sprite = getSpriteById(5)
         this.addChild(this.sprite)
     }
 
-    update(){
-        if(Game.getInstance().mute){
+    update() {
+        if (Game.getInstance().mute) {
             this.sprite.opacity = 0.4;
-        }else{
+        } else {
             this.sprite.opacity = 1;
         }
     }

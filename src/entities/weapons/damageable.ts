@@ -1,25 +1,26 @@
 import {Entity} from "../entity";
-import {Sprite} from "kontra";
 import {Character} from "../character";
-import {centeredAnchor} from "../../utils/sprite";
 import {collidesWithRotation} from "../../utils/sat-collision";
+import {SpriteNode} from "../../engine/nodes/sprite";
+import {EntityNode} from "../../engine/nodes/entity";
+import {Params} from "../../engine/nodes/types";
 
 export class Damageable extends Entity {
     isAttacking: boolean = false;
     standardDamage: number = 0;
-    sprite: Sprite;
+    sprite: SpriteNode;
     owner!: Character;
     destroyOnCollision: boolean = false;
     target?: Character;
 
-    constructor(x: number, y: number, sprite: Sprite) {
-        super({x: x, y: y, anchor: centeredAnchor});
+    constructor(config: Params<EntityNode>, sprite: SpriteNode) {
+        super(config)
         this.sprite = sprite;
         this.addChild(this.sprite);
     }
 
-    update() {
-        super.update();
+    update(delta: number) {
+        super.update(delta);
         this.checkForHit();
     }
 

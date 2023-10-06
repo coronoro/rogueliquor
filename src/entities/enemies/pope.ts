@@ -13,16 +13,18 @@ import {CircularSpell} from "../weapons/spells/circularSpell";
 import SpawnSpell from "../weapons/spells/spawnSpell";
 import {Villager} from "./villager";
 import BattleRoom from "../../rooms/battleRoom";
-import {randInt} from "kontra";
 import {PenColor} from "../../utils/colorize";
+import {Coordinate} from "../../engine/vector";
+import {Params} from "../../engine/nodes/types";
+import {EntityNode} from "../../engine/nodes/entity";
 
 class Pope extends Mage {
     name: string = "Pope Innocent III"
     speed: number = 2.0
     phase: number = 1;
 
-    constructor(x: number, y: number, room: BattleRoom) {
-        super(x, y, room, getSpriteById(1, PenColor.RealRed));
+    constructor(params: Params<EntityNode>, room: BattleRoom) {
+        super(params, room, getSpriteById(1, PenColor.RealRed));
         this.attackTimeoutTimer.setMax(80);
         this.seeDistance = 9999;
         this.handWeapon(new Staff([
@@ -34,9 +36,9 @@ class Pope extends Mage {
         this.healthBar.opacity = 0;
     }
 
-    update(){
-        super.update()
-        if(this.health <= this.maxHealth / 2 && this.phase == 1){
+    update(delta: number) {
+        super.update(delta)
+        if (this.health <= this.maxHealth / 2 && this.phase == 1) {
             this.phase = 2;
             this.speed = 2.3;
             this.attackTimeoutTimer.setMax(60);
@@ -51,10 +53,10 @@ class Pope extends Mage {
                 (spellCaster: SpellCaster) => {
                     return new SpawnSpell(spellCaster, this.room!, () => {
                         const i = randInt(0, 1);
-                        if(i == 1){
-                           return  new Villager(0, 0, this.room as BattleRoom);
-                        }else{
-                            return  new Mage(0, 0, this.room as BattleRoom);
+                        if (i == 1) {
+                            return new Villager({position: new Coordinate(0, 0)}, this.room as BattleRoom);
+                        } else {
+                            return new Mage({position: new Coordinate(0, 0)}, this.room as BattleRoom);
                         }
                     });
                 }
@@ -63,7 +65,7 @@ class Pope extends Mage {
         }
     }
 
-    die(){
+    die() {
         super.die();
         this.room?.deleteEnemies();
     }

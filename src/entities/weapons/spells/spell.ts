@@ -1,4 +1,3 @@
-import {Staff} from "../staffs";
 import {Timer} from "../../timer";
 import {centeredAnchor} from "../../../utils/sprite";
 
@@ -6,9 +5,10 @@ import {SpellParticle} from "./particles/spellParticle";
 import SpellCaster from "./spellCaster";
 import {Character} from "../../character";
 import {ParticleType} from "./particles/particleTypes";
-import {GameEntity} from "../../../engine/game-object";
+import {Coordinate} from "../../../engine/vector";
+import {EntityNode} from "../../../engine/nodes/entity";
 
-export class Spell extends GameEntity {
+export class Spell extends EntityNode {
     spellCaster: SpellCaster
     owner: Character
     targets: Character[]
@@ -41,8 +41,7 @@ export class Spell extends GameEntity {
     }
 
     doFollowSpellCaster() {
-        this.x = this.spellCaster.world.x;
-        this.y = this.spellCaster.world.y;
+        this.position = new Coordinate(this.spellCaster.world.x, this.spellCaster.world.y)
     }
 
     findTarget(): Character {
@@ -59,8 +58,8 @@ export class Spell extends GameEntity {
         if (this.followsCaster) this.doFollowSpellCaster();
     }
 
-    update() {
-        super.update();
+    update(delta: number) {
+        super.update(delta);
         this.castTimer.update();
 
         this.removeFlag = this.remove();

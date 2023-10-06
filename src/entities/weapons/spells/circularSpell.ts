@@ -1,9 +1,8 @@
 import {Spell} from "./spell";
-import {Vector} from "kontra";
 import {SpellParticle} from "./particles/spellParticle";
 import SpellCaster from "./spellCaster";
 import {ParticleType} from "./particles/particleTypes";
-import {getRotatedVector} from "../../../utils/vectors";
+import {Vector} from "../../../engine/vector";
 
 export class CircularSpell extends Spell {
     timer: number = 0;
@@ -28,13 +27,14 @@ export class CircularSpell extends Spell {
         super.castingUpdate();
         if (this.timer % this.spawnSpeed == 0) {
             const radiant = 2 * Math.PI * (this.timer / (this.spawnSpeed * this.numParticles));
-            const direction = getRotatedVector(Vector(1, 0), radiant);
-            this.addChild(new SpellParticle(direction.x * this.distance, direction.y * this.distance, this.particleType, this));
+            const direction = new Vector(1, 0).rotate(radiant)
+            const position = direction.multiply(this.distance).toCoordinate()
+            this.addChild(new SpellParticle(position, this.particleType, this));
         }
         this.timer++;
     }
 
     getRotatedDirection(radiant: number) {
-        return Vector(Math.cos(radiant), Math.sin(radiant))
+        return new Vector(Math.cos(radiant), Math.sin(radiant))
     }
 }

@@ -2,11 +2,11 @@ import {Character} from "../../character";
 import {Spell} from "./spell";
 import Game from "../../../game";
 import SpawnSpell from "./spawnSpell";
-import {GameEntity} from "../../../engine/game-object";
 import {Coordinate} from "../../../engine/vector";
+import {EntityNode} from "../../../engine/nodes/entity";
 
-class SpellCaster extends GameEntity {
-    private owner: Character;
+class SpellCaster extends EntityNode {
+    owner: Character;
     private spellFactories: any[];
 
     constructor(position: Coordinate, owner: Character, spellFactories: any[]) {

@@ -1,22 +1,22 @@
-import { GameObjectClass, Sprite } from "kontra";
-import { Character } from "../entities/character";
+import {Character} from "../entities/character";
+import {SpriteNode} from "../engine/nodes/sprite";
+import {EntityNode} from "../engine/nodes/entity";
+import {Params} from "../engine/nodes/types";
 
-class HealthBar extends GameObjectClass{
-    bar: Sprite
-    width: number
-    height: number
+class HealthBar extends EntityNode {
+    bar: SpriteNode
+    character: Character
 
-    constructor(x: number, y: number, width: number, height: number, character: Character){
-        super({x: x, y: y, width: width, character: character})
-        this.width = width;
-        this.height = height;
-        this.bar = Sprite({width: width, height: height, color: "#aa0000"});
-        this.addChild(Sprite({width: width, height: height, color: "#000000"}));
+    constructor(config: Params<EntityNode>, character: Character) {
+        super(config)
+        this.character = character
+        this.bar = new SpriteNode({width: this.width, height: this.height, color: "#aa0000"});
+        this.addChild(new SpriteNode({width: this.width, height: this.height, color: "#000000"}));
         this.addChild(this.bar);
     }
 
-    update(){
-        super.update();
+    update(delta: number) {
+        super.update(delta);
         this.bar.width = this.width * (this.character.health / this.character.maxHealth)
     }
 }

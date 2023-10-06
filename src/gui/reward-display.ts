@@ -1,27 +1,29 @@
-import {GameObjectClass, Text} from "kontra";
 import {Player} from "../entities/player";
 import {rewardFactory} from "../utils/reward-util";
 import {HealthReward} from "../entities/reward";
+import {Coordinate} from "../engine/vector";
+import {EntityNode} from "../engine/nodes/entity";
+import {TextNode} from "../engine/nodes/text";
 
-export default class RewardDisplay extends GameObjectClass {
+export default class RewardDisplay extends EntityNode {
 
-    rewardMap = new Map<string, Text>()
+    rewardMap = new Map<string, TextNode>()
     player: Player
 
     constructor(player: Player) {
-        super({x: 570, y: 530});
+        super({position: new Coordinate(570, 530)});
         this.player = player
         let i = 0
         rewardFactory().forEach((func) => {
             const reward = func()
-            if(reward instanceof HealthReward){
+            if (reward instanceof HealthReward) {
                 return;
             }
-            reward.x = 40 * i
-            reward.y = 5
+            reward.position.x = 40 * i
+            reward.position.y = 5
             reward.setScale(1.5, 1.5);
             this.addChild(reward)
-            const text = Text({text: `x 0`, font: '12px Verdana', color: "white", x: 10 + (40 * i)})
+            const text = new TextNode({text: `x 0`, font: '12px Verdana', color: "white", position: new Coordinate(10 + (40 * i), 0)})
             this.addChild(text)
             i = i + 1
             this.rewardMap.set(reward.status.name, text)
@@ -36,8 +38,8 @@ export default class RewardDisplay extends GameObjectClass {
         })
     }
 
-    update() {
+    update(delta: number) {
         this.updateRewardMap()
-        super.update();
+        super.update(delta);
     }
 }

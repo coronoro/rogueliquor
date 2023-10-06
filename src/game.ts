@@ -1,4 +1,3 @@
-import {GameObjectClass, keyPressed} from "kontra";
 import Room from "./rooms/room";
 import StartRoom from "./rooms/startRoom";
 import IntroRoom from "./rooms/introRoom";
@@ -7,8 +6,9 @@ import ChatBox from "./entities/chatBox";
 import {getbgm, playbgm, resumebgm} from "./utils/sound/catharian";
 import BattleRoom from "./rooms/battleRoom";
 import {Timer} from "./entities/timer";
+import {EntityNode} from "./engine/nodes/entity";
 
-class Game extends GameObjectClass {
+class Game extends EntityNode {
     introRoom: IntroRoom;
     currentRoom!: Room;
     currentChatBox?: ChatBox;
@@ -25,9 +25,11 @@ class Game extends GameObjectClass {
 
 
     public static _game: Game;
+    private bgm: [number[], number[]];
 
     private constructor() {
         super();
+        // @ts-ignore
         this.bgm = getbgm()
         this.introRoom = new IntroRoom();
         // this.goToStartRoom()
@@ -48,37 +50,40 @@ class Game extends GameObjectClass {
 
         if (room instanceof BattleRoom) {
             this.tryToActivateSoundInBattleRoom();
-        }else{
+        } else {
             this.tryToMuteSound();
         }
         room.init();
         this.currentRoom = room;
     }
 
-    tryToActivateSoundInBattleRoom(){
+    tryToActivateSoundInBattleRoom() {
         if (!this.mute && !this.audioBufferSourceNode) {
-                this.audioBufferSourceNode = playbgm(this.bgm)
-            }
-        } tryToMuteSound() {
-            if (this.audioBufferSourceNode) {
-                this.audioBufferSourceNode?.stop();
-                this.audioBufferSourceNode = undefined}
+            this.audioBufferSourceNode = playbgm(this.bgm)
+        }
     }
 
-    toggleMute(){
+    tryToMuteSound() {
+        if (this.audioBufferSourceNode) {
+            this.audioBufferSourceNode?.stop();
+            this.audioBufferSourceNode = undefined
+        }
+    }
+
+    toggleMute() {
         this.mute = !this.mute;
 
-        if(this.mute){
+        if (this.mute) {
             this.tryToMuteSound()
-        }else{
-            if(this.currentRoom instanceof BattleRoom){
+        } else {
+            if (this.currentRoom instanceof BattleRoom) {
                 this.tryToActivateSoundInBattleRoom();
             }
         }
     }
 
     startChat(texts: string[], block: boolean = true) {
-        if(!this.interactTimeoutTimer.isActive){
+        if (!this.interactTimeoutTimer.isActive) {
             this.blockChat = block;
             this.currentChatBox = new ChatBox(texts)
         }
@@ -93,35 +98,35 @@ class Game extends GameObjectClass {
         }
     }
 
-    update = () => {
+    update = (delta: number) => {
         this.updateMuteButton();
 
         if (this.currentChatBox) {
             this.currentChatBox.update();
-        }else{
+        } else {
             this.interactTimeoutTimer.update();
         }
 
-        if(!this.blockChat){
-            this.currentRoom.update();
+        if (!this.blockChat) {
+            this.currentRoom.update(delta);
         }
 
 
         resumebgm()
     }
 
-    updateMuteButton(){
+    updateMuteButton() {
         this.muteInputTimer.update();
-        if(!this.muteInputTimer.isActive && keyPressed("m")){
+        if (!this.muteInputTimer.isActive && keyPressed("m")) {
             this.muteInputTimer.start();
             this.toggleMute();
         }
     }
 
-    render = () => {
-        this.currentRoom.render();
-        this.currentChatBox?.render();
-    }
+    // render = () => {
+    //     this.currentRoom.render();
+    //     this.currentChatBox?.render();
+    // }
 }
 
 export default Game;

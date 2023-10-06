@@ -1,8 +1,10 @@
 import {colorizeImage, PenColor} from "./colorize";
 import {img} from "./utils";
+import {SpriteNode} from "../engine/nodes/sprite";
+import {Coordinate} from "../engine/vector";
 
-function getSpriteById(id: number, color: PenColor = PenColor.Green, additional: object = {}, image = img): Sprite {
-    return Sprite({
+function getSpriteById(id: number, color: PenColor = PenColor.Green, additional: object = {}, image = img): SpriteNode {
+    return new SpriteNode({
         anchor: centeredAnchor,
         ...additional,
         animations: SpriteSheet({
@@ -18,6 +20,6 @@ function getSpriteById(id: number, color: PenColor = PenColor.Green, additional:
     });
 }
 
-const centeredAnchor = {x: 0.5, y: 0.5}
+const centeredAnchor = new Coordinate(0.5, 0.5)
 
 export {getSpriteById, centeredAnchor};

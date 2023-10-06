@@ -1,10 +1,10 @@
 import {centeredAnchor} from "../utils/sprite";
 import Room from "../rooms/room";
 import {getCanvasHeight, getCanvasWidth, wallHeight} from "../utils/utils";
-import {GameEntity} from "../engine/game-object";
 import {Coordinate, Vector} from "../engine/vector";
+import {EntityNode} from "../engine/nodes/entity";
 
-export class Entity extends GameEntity {
+export class Entity extends EntityNode {
     // movingTo: Vector = Vector(this.x, this.y);
     movingTo: Vector = new Vector(0, 0);
     speed: number = 2;
@@ -15,7 +15,7 @@ export class Entity extends GameEntity {
 
     inbound: boolean = false;
 
-    protected room?: Room
+    room?: Room
 
     setRoom(room: Room) {
         this.room = room
@@ -40,7 +40,7 @@ export class Entity extends GameEntity {
         if (!this.moving) return;
 
         if (distance < this.currentSpeed()) {
-            this.position = this.movingTo
+            this.position = this.movingTo.toCoordinate()
         } else {
             const direction = this.movingTo.normalize();
             this.position = this.position.add(direction.multiply(distance))
@@ -64,8 +64,8 @@ export class Entity extends GameEntity {
 
     distanceTo = (other: Entity): number => this.position.distance(other.position);
 
-    moveTo(direction: Vector, distance: number = 0) {
-        direction = direction.normalize();
+    moveTo(position: Coordinate, distance: number = 0) {
+        const direction = position.normalize();
         distance = distance == 0 ? this.currentSpeed() : distance;
         this.movingTo = this.position.add(direction.multiply(distance))
     }

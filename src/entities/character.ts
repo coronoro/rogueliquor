@@ -14,10 +14,12 @@ import {
 } from "../utils/reward-util";
 import {Weapon} from "./weapons/weapon";
 import {Coordinate, Vector} from "../engine/vector";
+import {SpriteNode} from "../engine/nodes/sprite";
+import {Params} from "../engine/nodes/types";
 
 
 export class Character extends Entity implements StatusAttributes {
-    sprite: Sprite;
+    sprite: SpriteNode;
 
     armCanRotate: boolean = false;
     //internal values
@@ -98,10 +100,10 @@ export class Character extends Entity implements StatusAttributes {
         this._dashDistance = number
     }
 
-    constructor(x: number, y: number, sprite: Sprite, room?: Room) {
-        super({width: 5, height: 8, position: new Coordinate(x,y), scaleX: 5, scaleY: 5});
+    constructor(config: Params<SpriteNode>, sprite: SpriteNode, room?: Room) {
+        super({width: 5, height: 8, position: config.position, scaleX: 5, scaleY: 5});
         this.sprite = sprite;
-        this.sprite.x += 0.5;
+        this.sprite.position.x += 0.5;
         this.room = room
         this.sprite.opacity = 0;
         this.addChild(this.sprite);
@@ -112,23 +114,22 @@ export class Character extends Entity implements StatusAttributes {
     }
 
     collectReward(reward: Reward) {
-        if(reward instanceof HealthReward){
+        if (reward instanceof HealthReward) {
             reward.apply(this);
             return;
         }
 
-        if(reward instanceof WeaponReward){
+        if (reward instanceof WeaponReward) {
             this.handWeapon(reward.weapon);
-            if(reward.weapon instanceof Sword){
+            if (reward.weapon instanceof Sword) {
                 this.attackSpeed = 40;
-            }
-            else if(reward.weapon instanceof BigDagger){
+            } else if (reward.weapon instanceof BigDagger) {
                 this.attackSpeed = 45;
             }
             return;
         }
 
-        if(reward instanceof  MaxHealthReward){
+        if (reward instanceof MaxHealthReward) {
             this.health += 5;
         }
 
@@ -148,7 +149,7 @@ export class Character extends Entity implements StatusAttributes {
         this.health = maxHealth;
     }
 
-    update(delta:number) {
+    update(delta: number) {
         super.update(delta);
         this.updateHopping();
 
@@ -158,9 +159,9 @@ export class Character extends Entity implements StatusAttributes {
         this.deathTimer.update();
         this.spawningTimer.update();
 
-        if(this.spawning){
+        if (this.spawning) {
             this.sprite.opacity = this.spawningTimer.time / this.spawningTimer.maxTime;
-        }else{
+        } else {
             this.sprite.opacity = this.invincibleTimer.isActive ? 0.5 : 1;
         }
 
@@ -185,7 +186,7 @@ export class Character extends Entity implements StatusAttributes {
             this.z = 0;
             this.zDir = 1;
         }
-        this.sprite.y = -this.z;
+        this.sprite.position.y = -this.z;
     }
 
     playHopSound = () => {
@@ -195,11 +196,11 @@ export class Character extends Entity implements StatusAttributes {
         return new Vector(this.lookingDirection, 0);
     }
 
-    dashTo(direction: Vector) {
+    dashTo(position: Coordinate) {
         if (!this.dashing && !this.dashRefillTimer.isActive) {
             this.dashing = true;
             this.dashRefillTimer.start(this.dashTimeout);
-            this.moveTo(direction, this.dashDistance);
+            this.moveTo(position, this.dashDistance);
         }
     }
 

@@ -1,13 +1,16 @@
 import {Character} from "../character";
 import {Player} from "../player";
-import {Sprite, Vector} from "kontra";
 import {Timer} from "../timer";
 import {getRandomVecDir, randNumber} from "../../utils/utils";
 import {centeredAnchor} from "../../utils/sprite";
 import BattleRoom from "../../rooms/battleRoom";
+import {Coordinate, Vector} from "../../engine/vector";
+import {SpriteNode} from "../../engine/nodes/sprite";
+import {Params} from "../../engine/nodes/types";
+import {EntityNode} from "../../engine/nodes/entity";
 
 export class Enemy extends Character {
-    healthBar: Sprite;
+    healthBar: SpriteNode;
     healthBarWidth: number = 6;
     seeDistance: number = 100;
     aggro: boolean = false;
@@ -20,15 +23,15 @@ export class Enemy extends Character {
 
     loadAttackTimer = new Timer(40, () => this.attack(Player.getInstance()));
 
-    constructor(x: number, y: number, sprite: Sprite, room: BattleRoom) {
-        super(x, y, sprite, room);
-        this.healthBar = Sprite({anchor: centeredAnchor, y: -5, height: 1, color: "#ff000099"})
+    constructor(params: Params<EntityNode>, sprite: SpriteNode, room: BattleRoom) {
+        super(params, sprite, room);
+        this.healthBar = new SpriteNode({anchor: centeredAnchor, position: new Coordinate(0, -5), height: 1, color: "#ff000099"})
         this.addChild(this.healthBar)
     }
 
-    update() {
-        super.update();
-        if(this.dashing || this.spawning) return;
+    update(delta: number) {
+        super.update(delta);
+        if (this.dashing || this.spawning) return;
 
         if (this.aggro) this.updateAggro();
         else this.updateIdle();
@@ -37,7 +40,7 @@ export class Enemy extends Character {
     updateAggro() {
         this.loadAttackTimer.update();
 
-        if(this.inAttackRange() && this.canAttack() && !this.loadAttackTimer.isActive) {
+        if (this.inAttackRange() && this.canAttack() && !this.loadAttackTimer.isActive) {
             this.initAttack();
         }
 
@@ -52,7 +55,7 @@ export class Enemy extends Character {
         }
     }
 
-    initAttack(){
+    initAttack() {
         this.loadAttackTimer.start();
         this.weapon?.startWiggle();
     }
@@ -75,19 +78,19 @@ export class Enemy extends Character {
     }
 
     moveToPlayer() {
-        this.movingTo = Vector(Player.getInstance().x - this.playerDirection() * 38, Player.getInstance().y)
+        this.movingTo = new Vector(Player.getInstance().x - this.playerDirection() * 38, Player.getInstance().y)
     }
 
-    dashToPlayer(){
-        this.dashTo(this.vectorTo(Player.getInstance().x, Player.getInstance().y));
+    dashToPlayer() {
+        this.dashTo(Player.getInstance().position);
     }
 
     playerDirection() {
-        return Math.sign(Player.getInstance().x - this.x);
+        return Math.sign(Player.getInstance().position.x - this.position.x);
     }
 
     getLookingDirection() {
-        if(this.health == 0) return 1;
+        if (this.health == 0) return 1;
         return this.aggro ? this.playerDirection() : super.getLookingDirection();
     }
 
@@ -98,6 +101,6 @@ export class Enemy extends Character {
 
     pointDaggerDirection() {
         if (!this.armCanRotate || !this.aggro) return super.pointDaggerDirection()
-        return Vector(Player.getInstance().world.x - this.world.x, Player.getInstance().world.y - this.world.y).normalize();
+        return new Vector(Player.getInstance().world.x - this.world.x, Player.getInstance().world.y - this.world.y).normalize();
     }
 }

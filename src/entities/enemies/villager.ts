@@ -3,10 +3,12 @@ import {levelToColor, randNumber} from "../../utils/utils";
 import {getSpriteById} from "../../utils/sprite";
 import {BigDagger, SmallDagger} from "../weapons/daggers";
 import BattleRoom from "../../rooms/battleRoom";
+import {EntityNode} from "../../engine/nodes/entity";
+import {Params} from "../../engine/nodes/types";
 
 export class Villager extends Enemy {
-    constructor(x: number, y: number, room: BattleRoom) {
-        super(x, y, getSpriteById(0, levelToColor(room.level)), room);
+    constructor(params: Params<EntityNode>, room: BattleRoom) {
+        super(params, getSpriteById(0, levelToColor(room.level)), room);
         const lvl = room.level;
 
         this.strength = 0.5 + lvl * 0.3
@@ -27,9 +29,9 @@ export class Villager extends Enemy {
         this.handWeapon(weapon)
     }
 
-    updateAggro(){
+    updateAggro() {
         super.updateAggro();
-        if((this.room as BattleRoom).level > 8 && this.distanceToPlayer() <= this.seeDistance && this.distanceToPlayer() >= 0.5 * this.seeDistance){
+        if ((this.room as BattleRoom).level > 8 && this.distanceToPlayer() <= this.seeDistance && this.distanceToPlayer() >= 0.5 * this.seeDistance) {
             this.dashToPlayer();
         }
     }

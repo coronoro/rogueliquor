@@ -4,7 +4,7 @@ import {Timer} from "../entities/timer";
 import {Reward, WeaponReward} from "../entities/reward";
 import {getRewards} from "../utils/reward-util";
 import Interactable from "../entities/interactable";
-import {getCanvasHeight, getCanvasWidth, img, wallHeight} from "../utils/utils";
+import {getCanvasCenter, getCanvasHeight, getCanvasWidth, img, wallHeight} from "../utils/utils";
 import Teleporter from "../entities/teleporter";
 import StageDisplay from "../gui/stage-display";
 import Pope from "../entities/enemies/pope";
@@ -17,6 +17,7 @@ import RewardDisplay from "../gui/reward-display";
 import {spawningPattern} from "../entities/enemies/spawning-pattern";
 import {Player} from "../entities/player";
 import {BigDagger, Sword} from "../entities/weapons/daggers";
+import {Coordinate, Vector} from "../engine/vector";
 
 class BattleRoom extends GameRoom {
     level: number = 1
@@ -57,8 +58,8 @@ class BattleRoom extends GameRoom {
     }
 
 
-    update() {
-        super.update();
+    update(delta: number) {
+        super.update(delta);
         this.spawnTimer.update();
 
         if (this.enemies.length == 0 && this.inCombat) {
@@ -75,7 +76,7 @@ class BattleRoom extends GameRoom {
     spawnReward() {
         Player.getInstance().health += 2;
         if (this.reward) {
-            const interactable = new Interactable(getCanvasWidth() / 2, getCanvasHeight() / 2, this.reward);
+            const interactable = new Interactable(getCanvasCenter(), this.reward);
             interactable.setScale(2.5, 2.5);
             this.interactables.push(interactable)
         }
@@ -83,12 +84,12 @@ class BattleRoom extends GameRoom {
 
     spawnPortals() {
         if (this.level == spawningPattern.length - 1) {
-            const room = new BossRoom(new Pope(getCanvasWidth() / 2, getCanvasHeight() / 2, this))
+            const room = new BossRoom(new Pope({position: getCanvasCenter()}, this))
             this.components.backgroundObjects.push(new Teleporter(getCanvasWidth() / 2, room))
             return;
         }
 
-        if(this.level == 4){
+        if (this.level == 4) {
             const dagger = new BigDagger();
             dagger.stabbingDistance = 8;
             dagger.standardDamage = 5;
@@ -112,7 +113,7 @@ class BattleRoom extends GameRoom {
         }
     }
 
-    randomPosition = () => Vector(
+    randomPosition = () => new Coordinate(
         randInt(50, getCanvasWidth() - 50),
         randInt(wallHeight + 20, getCanvasHeight() * 0.6)
     )
@@ -125,7 +126,7 @@ class BattleRoom extends GameRoom {
             const enemyClass = enemyTypes[i % 2];
             for (let j = 0; j < num; j++) {
                 const pos = this.randomPosition();
-                this.enemies.push(new enemyClass(pos.x, pos.y, this))
+                this.enemies.push(new enemyClass({position: pos}, this))
             }
         })
 
