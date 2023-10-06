@@ -1,6 +1,3 @@
-import {GameObjectClass, getCanvas, getWorldRect, imageAssets, randInt, TileEngine, TileEngineClass} from "kontra";
-import {weightedRandNumber} from "../utils/rand-util";
-
 interface TileLayer {
     opacity: number
     data: number[]
